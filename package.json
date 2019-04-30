@@ -1,0 +1,27 @@
+{
+  "name": "speechBot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tunnel": "ngrok http 8080"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "apiai": "^4.0.3",
+    "dialogflow-fulfillment": "^0.4.1",
+    "actions-on-google": "^2.6.0",
+    "dotenv": "^7.0.0",
+    "ejs": "^2.5.6",
+    "express": "^4.16.4",
+    "socket.io": "^2.2.0"
+  },
+  "devDependencies": {
+    "ngrok": "^3.1.1",
+    "nodemon": "^1.18.11",
+    "standard": "^12.0.1"
+  }
+}
