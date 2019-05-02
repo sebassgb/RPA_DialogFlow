@@ -5,7 +5,7 @@ var bodyParser = require('body-parser');
 const ngrok = require('ngrok');
 const express = require('express');
 const app = express();
-
+var reply = "";
 app.use(express.static(__dirname + '/views')); // html
 app.use(express.static(__dirname + '/public')); // js, css, images
 
@@ -29,7 +29,7 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', function (socket) {//We need to open the browser with the url HTTPS in order to user DialogFlow
-
+ 
   // Get a reply from DialogFlow
   app.post('/', express.json(), function (req, res) {
     if (req.body.queryResult.action === "horary") {
@@ -37,39 +37,31 @@ io.on('connection', function (socket) {//We need to open the browser with the ur
       let num1 = parseFloat(req.body.queryResult.parameters.number);
       let num2 = parseFloat(req.body.queryResult.parameters.number1);
       let sum = num1 + num2;
-      var reply = num1 + " + " + num2 + " es " + sum;
+      reply = num1 + " + " + num2 + " es " + sum;
       socket.emit('bot reply', reply);//Here we will give the respose to the browser
       res.json({
         "fulfillmentText": reply
       });
-    }
+    }else if(req.body.queryResult.action === "detectemail"){//We start matching the others intents
+      console.log(req.body.queryResult.queryText);
+      let mail = req.body.queryResult.parameters.email;
+      reply = mail;
+      res.json({
+        "fulfillmentText": reply
+      });
+    } 
+
   });
 });
-/*
-io.on('connection', function(socket) {
-  socket.on('chat message', (text) => {
-    console.log('Message: ' + text);
 
-    // Get a reply from API.ai
-    let apiaiReq = apiai.textRequest(text, {
-      sessionId: APIAI_SESSION_ID
-    });
-
-    apiaiReq.on('response', (response) => {
-      let aiText = response.result.fulfillment.speech;
-      console.log('Bot reply: ' + aiText);
-      socket.emit('bot reply', aiText);
-    });
-
-    apiaiReq.on('error', (error) => {
-      console.log(error);
-    });
-
-    apiaiReq.end();
-
-  });
-}); */
-
+/*else if(req.body.queryResult.action === "detectemail"){
+      console.log(req.body.queryResult.queryText);
+      let mail = req.body.queryResult.parameters.email;
+      reply = mail;
+      res.json({
+        "fulfillmentText": reply
+      });
+    } */
 
 (async function () {
   const url = await ngrok.connect(port);//We have to upgrade to one of ngrok’s paid plans to avoid changing address everytime or use Heroku
