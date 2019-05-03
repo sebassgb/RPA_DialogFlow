@@ -1,11 +1,13 @@
 'use strict';
 
-require('dotenv').config()
+//require('dotenv').config()
 var bodyParser = require('body-parser');
 const ngrok = require('ngrok');
 const express = require('express');
 const app = express();
-var reply = "";
+
+var reply = "";//Variable that will contain the messages
+
 app.use(express.static(__dirname + '/views')); // html
 app.use(express.static(__dirname + '/public')); // js, css, images
 
@@ -22,10 +24,30 @@ const io = require('socket.io')(server);
 io.on('connection', function (socket) {//We start listening the conversation
   console.log('a user connected');
 });
+/* 
+let runPy = new Promise(function(success, nosuccess) {//Run Python's script
+
+  const { spawn } = require('child_process');
+  const pyprog = spawn('python', ['./public/py/test.py']);
+
+  pyprog.stdout.on('data', function(data) {//In order ro receive data from Python
+    console.log('python executed');
+      success(data);
+  });
+ 
+  pyprog.stderr.on('data', (data) => {
+    console.log('python NOT executed');
+      nosuccess(data);
+  });
+}); */
 
 // Web UI
 app.get('/', (req, res) => {
   res.sendFile('index.html');
+ /*  runPy.then(function(fromRunpy) {
+    console.log(fromRunpy.toString());
+    res.end(fromRunpy);
+}); */
 });
 
 io.on('connection', function (socket) {//We need to open the browser with the url HTTPS in order to user DialogFlow
@@ -45,7 +67,7 @@ io.on('connection', function (socket) {//We need to open the browser with the ur
     }else if(req.body.queryResult.action === "detectemail"){//We start matching the others intents
       console.log(req.body.queryResult.queryText);
       let mail = req.body.queryResult.parameters.email;
-      reply = mail;
+      reply = mail;     
       res.json({
         "fulfillmentText": reply
       });
