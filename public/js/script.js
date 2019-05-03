@@ -17,9 +17,9 @@ recognition.maxAlternatives = 1;
 
 
 //We  capture the DOM reference for the button UI, and listen for the click event to initiate speech recognition
-document.querySelector('button').addEventListener('click', () => {
+/* document.querySelector('button').addEventListener('click', () => {
   recognition.start();
-});
+}); */
 
 recognition.addEventListener('speechstart', () => {
   console.log('Speech has been detected.');

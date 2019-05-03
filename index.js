@@ -19,6 +19,10 @@ const server = app.listen(port, ip);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+function confirmation(){
+  alert("Succesfully sent");
+}
+
 const io = require('socket.io')(server);
 
 io.on('connection', function (socket) {//We start listening the conversation

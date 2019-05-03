@@ -1,36 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width">
-    <meta name="description" content="Simple AI Chat Bot Demo with Web Speech API">
 
-    <title>Simple AI Demo with Web Speech API</title>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width">
+  <meta name="description" content="Simple AI Chat Bot Demo with Web Speech API">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="css/style.css">
-  </head>
+  <title>Simple AI Demo with Web Speech API</title>
 
-  <body>
-    <section>
-      <h1>Simple AI Bot</h1>
-      <h2>with Web Speech API</h2>
-      <iframe
-    allow="microphone;"
-    width="350"
-    height="430"
-    src="https://console.dialogflow.com/api-client/demo/embedded/fc58f784-20a2-411c-a42a-987534a66b28">
-</iframe>
-      <button><i class="fa fa-microphone"></i></button>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  
+  <link rel="stylesheet" href="css/styleForm.css">
+</head>
 
-      <div>
-          <p>You said: <em class="output-you">...</em></p>
+<body>
+  <div class="container">
+    <div class="bot">
+      <section>
+        <h1>Simple RPA Bot</h1>
+        <iframe allow="microphone;" width="350" height="430"
+          src="https://console.dialogflow.com/api-client/demo/embedded/fc58f784-20a2-411c-a42a-987534a66b28">
+        </iframe>
+        <!--   <button><i class="fa fa-microphone"></i></button> -->
+
+        <div>
+          <!-- <p>You said: <em class="output-you">...</em></p> -->
           <p>Bot replied: <em class="output-bot">...</em></p>
+        </div>
+      </section>
+    </div>
+    <div class="form">
+        <form method="POST" class="appointment-form" id="appointment-form">
+        <div class="formClosed">
+            <h2>Réserver Révision de vélo</h2>
+            <div class="form-group-1">
+              <input type="text" name="name" id="name" placeholder="Your Name" required />
+              <input type="email" name="email" id="email" placeholder="Email" required />
+              <input type="number" name="phone_number" id="phone_number" placeholder="Phone number" required />
+              <input type="string" name="bike_model" id="bike_model" placeholder="Bike Model" required />
+              <input type="text" name="horary" id="horary" placeholder="Schedule" required />
+            </div>
+        </div>      
+      <div class="form-check">
+        <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" />
+        <label for="agree-term" class="label-agree-term"><span><span></span></span>I agree to the <a href="#"
+            class="term-service">Terms and Conditions</a></label>
       </div>
-    </section>
+      <div class="form-submit">
+        <button name="submit" id="submit" class="submit" onclick="return confirmation()">Request an appointment</button>
+      </div>
+      </form>
+  </div>
+  </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
-    <script type="text/javascript" src="js/script.js"></script>
-  </body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+  <script type="text/javascript" src="js/script.js"></script>
+</body>
 </html>
