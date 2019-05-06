@@ -1,3 +1,4 @@
+from uuid import uuid4
 f = open('file.txt','w')
-f.write(randomStringDigits(8))
+f.write(format(uuid4()))
 f.close()
