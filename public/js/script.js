@@ -11,7 +11,7 @@ const outputBot = document.querySelector('.output-bot');
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
 
-recognition.lang = 'en-US';
+recognition.lang = 'fr-FR';
 recognition.interimResults = false;
 recognition.maxAlternatives = 1;
 
