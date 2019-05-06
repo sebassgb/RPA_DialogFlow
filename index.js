@@ -19,17 +19,11 @@ const server = app.listen(port, ip);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-function confirmation() {
-  alert("Succesfully sent");
-}
-
 const io = require('socket.io')(server);
 
 io.on('connection', function (socket) {//We start listening the conversation
   console.log('a user connected');
 });
-
-
 
 // Web UI
 app.get('/', (req, res) => {
@@ -42,14 +36,15 @@ app.get('/', (req, res) => {
 
 io.on('connection', function (socket) {//We need to open the browser with the url HTTPS in order to user DialogFlow
 
-
   // Get a reply from DialogFlow
   app.post('/', express.json(), function (req, res) {
     if (req.body.queryResult.action === "horary") {
       console.log(req.body.queryResult.queryText);//Question made by user, req contains all the request
-      let timer = parseFloat(req.body.queryResult.parameters.time);
-      reply = "Ok " + timer;
+      console.log(req.body.queryResult.parameters.time);
+      let timer = req.body.queryResult.parameters.time;
+      reply = timer;
       socket.emit('bot reply', reply);//Here we will give the respose to the browser
+      socket.emit('horary', reply);//Here we will give the respose to the browser
       res.json({
         "fulfillmentText": reply
       });
@@ -57,7 +52,8 @@ io.on('connection', function (socket) {//We need to open the browser with the ur
       console.log(req.body.queryResult.queryText);
       let mail = req.body.queryResult.parameters.email;
       reply = mail;
-      socket.emit('bot reply', reply);//Here we will give the respose to the browser     
+      socket.emit('bot reply', reply);//Here we will give the respose to the browser
+      socket.emit('email', reply);//Here we will give the respose to the browser     
       res.json({
         "fulfillmentText": reply
       });
@@ -65,7 +61,8 @@ io.on('connection', function (socket) {//We need to open the browser with the ur
       console.log(req.body.queryResult.queryText);
       let phone = req.body.queryResult.parameters.phonenumber;
       reply = phone;
-      socket.emit('bot reply', reply);//Here we will give the respose to the browser   
+      socket.emit('bot reply', reply);//Here we will give the respose to the browser
+      socket.emit('phone', reply);//Here we will give the respose to the browser   
       res.json({
         "fulfillmentText": reply
       });
@@ -73,7 +70,8 @@ io.on('connection', function (socket) {//We need to open the browser with the ur
       console.log(req.body.queryResult.queryText);
       let bike = req.body.queryResult.parameters.Bike;
       reply = bike;
-      socket.emit('bot reply', reply);//Here we will give the respose to the browser  
+      socket.emit('bot reply', reply);//Here we will give the respose to the browser
+      socket.emit('bike', reply);//Here we will give the respose to the browser  
       res.json({
         "fulfillmentText": reply
       });
@@ -81,7 +79,8 @@ io.on('connection', function (socket) {//We need to open the browser with the ur
       console.log(req.body.queryResult.queryText);
       let name = req.body.queryResult.parameters.given;
       reply = name;
-      socket.emit('bot reply', reply);//Here we will give the respose to the browser     
+      socket.emit('bot reply', reply);//Here we will give the respose to the browser
+      socket.emit('name', reply);//Here we will give the respose to the browser     
       res.json({
         "fulfillmentText": reply
       });
@@ -104,7 +103,7 @@ io.on('connection', function (socket) {//We need to open the browser with the ur
           nosuccess(data);
         });
       });
-      
+
       socket.emit('bot reply', reply);//Here we will give the respose to the browser     
       res.json({
         "fulfillmentText": reply

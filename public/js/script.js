@@ -4,6 +4,12 @@ const socket = io();
 
 const outputYou = document.querySelector('.output-you');
 const outputBot = document.querySelector('.output-bot');
+const form = document.forms[0];
+const selectElementName = form.querySelector('input[name="name"]');
+const selectElementMail = form.querySelector('input[name="email"]');
+const selectElementModel = form.querySelector('input[name="bike_model"]');
+const selectElementPhone = form.querySelector('input[name="phone_number"]');
+const selectElementHorary = form.querySelector('input[name="horary"]');
 // test for relevant API-s
   // for (let api of ['speechSynthesis', 'webkitSpeechSynthesis', 'speechRecognition', 'webkitSpeechRecognition']) {
   //   console.log('api ' + api + " and if browser has it: " + (api in window));
@@ -11,7 +17,7 @@ const outputBot = document.querySelector('.output-bot');
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
 
-recognition.lang = 'fr-FR';
+recognition.lang = 'en-US';
 recognition.interimResults = false;
 recognition.maxAlternatives = 1;
 
@@ -52,6 +58,36 @@ function synthVoice(text) {
   synth.speak(utterance);
 }
 //Function that will show the answer in the browser
+
+socket.on('name', function (replyText) {
+  synthVoice(replyText);
+  if (replyText === '') replyText = '(No answer...)';
+  selectElementName.value = replyText;
+});
+
+socket.on('email', function (replyText) {
+  synthVoice(replyText);
+  if (replyText === '') replyText = '(No answer...)';
+  selectElementMail.value = replyText;
+});
+
+socket.on('phone', function (replyText) {
+  synthVoice(replyText);
+  if (replyText === '') replyText = '(No answer...)';
+  selectElementPhone.value = replyText;
+});
+
+socket.on('bike', function (replyText) {
+  synthVoice(replyText);
+  if (replyText === '') replyText = '(No answer...)';
+  selectElementModel.value = replyText;
+});
+
+socket.on('horary', function (replyText) {
+  synthVoice(replyText);
+  if (replyText === '') replyText = '(No answer...)';
+  selectElementHorary.value = replyText;
+});
 
 socket.on('bot reply', function (replyText) {
   synthVoice(replyText);

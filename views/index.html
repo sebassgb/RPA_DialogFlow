@@ -38,21 +38,20 @@
         <div class="formClosed">
             <h2>Réserver Révision de vélo</h2>
             <div class="form-group-1">
-              <input type="text" name="name" id="name" placeholder="Your Name" required />
+              <input type="text" name="name" class="nameF"  placeholder="Your Name" required />
               <input type="email" name="email" id="email" placeholder="Email" required />
               <input type="number" name="phone_number" id="phone_number" placeholder="Phone number" required />
               <input type="string" name="bike_model" id="bike_model" placeholder="Bike Model" required />
               <input type="text" name="horary" id="horary" placeholder="Schedule" required />
             </div>  
               <center><div class="form-submit">
-                <button name="submit" id="submit" class="submit" onclick="return confirmation()">Request an appointment</button>
+                <button name="submit" id="submit" class="submit">Request an appointment</button>
               </div></center>
         </div>    
         
       </form>
   </div>
   </div>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
   <script type="text/javascript" src="js/script.js"></script>
 </body>
