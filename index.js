@@ -59,7 +59,7 @@ io.on('connection', function (socket) {//We need to open the browser with the ur
       });
     } else if (req.body.queryResult.action === "phonenumber") {//We start matching the others intents
       console.log(req.body.queryResult.queryText);
-      let phone = req.body.queryResult.parameters.phonenumber;
+      let phone = req.body.queryResult.parameters.phone;
       reply = phone;
       socket.emit('bot reply', reply);//Here we will give the respose to the browser
       socket.emit('phone', reply);//Here we will give the respose to the browser   
