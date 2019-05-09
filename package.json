@@ -11,12 +11,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "actions-on-google": "^2.6.0",
     "apiai": "^4.0.3",
     "dialogflow-fulfillment": "^0.4.1",
-    "actions-on-google": "^2.6.0",
     "dotenv": "^7.0.0",
     "ejs": "^2.5.6",
     "express": "^4.16.4",
+    "mqtt": "^2.18.8",
+    "mqtt-connection": "^4.0.0",
     "socket.io": "^2.2.0"
   },
   "devDependencies": {

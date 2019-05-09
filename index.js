@@ -1,7 +1,7 @@
 'use strict';
 
 //require('dotenv').config()
-var bodyParser = require('body-parser');
+var bodyParser = require('body-parser');//Parses Incoming Request bodies
 const ngrok = require('ngrok');
 const express = require('express');
 const app = express();
