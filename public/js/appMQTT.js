@@ -11,10 +11,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }))
 
 var mqttClient = new mqttHandler();
-mqttClient.custom_topic = 'topic';
-mqttClient.connect(mqttClient.custom_topic);
+
 // Routes
-app.post("/send-mqtt", function(req, res) {
+app.post("/send-mqtt", function (req, res) {
   mqttClient.sendMessage(req.body.message);
   res.status(200).send("Message sent to mqtt");
 });
@@ -28,15 +27,18 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 
-  // Get a reply from DialogFlow
-  app.post('/', express.json(), function (req, res) {
-    if (req.body.queryResult.action === "getTemperature") {
-      console.log(req.body.queryResult.queryText);//Question made by user, req contains all the request
-         res.json({
-        "fulfillmentText": reply
-      });
-    }
-  });    
+// Get a reply from DialogFlow
+app.post('/', express.json(), function (req, res) {
+  if (req.body.queryResult.action === "getTemperature") {
+    //console.log(req.body.queryResult.queryText);//Question made by user, req contains all the request
+    mqttClient.custom_topic = 'temperature';
+    mqttClient.connect(mqttClient.custom_topic);    
+    reply = mqttClient.sendMessage("30°");
+    res.json({
+      "fulfillmentText": reply
+    });
+  }
+});
 
 
 (async function () {
