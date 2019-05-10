@@ -1,5 +1,6 @@
 const mqtt = require('mqtt');
 
+
 class MqttHandler {
   constructor() {//Just in case that we need authentification
     this.mqttClient = null;
@@ -8,10 +9,11 @@ class MqttHandler {
     this.password = 'YOUR_PASSWORD';
   }
   
-  connect() {
+  connect(custom_topic) {
     // Connect mqtt with credentials (in case of needed, otherwise we can omit 2nd param)
     //this.mqttClient = mqtt.connect(this.host, { username: this.username, password: this.password });
     this.mqttClient = mqtt.connect('mqtt://localhost');
+
     // Mqtt error calback
     this.mqttClient.on('error', (err) => {
       console.log(err);
@@ -24,11 +26,14 @@ class MqttHandler {
     });
 
     // mqtt subscriptions
-    this.mqttClient.subscribe('mytopic', {qos: 0});
+    this.mqttClient.subscribe(custom_topic, {qos: 0});
+
+   
 
     // When a message arrives, console.log it
     this.mqttClient.on('message', function (topic, message) {
       console.log(message.toString());
+      this.reply = message.toString();//Global variable that send the message to DialogFlow
     });
 
     this.mqttClient.on('close', () => {
@@ -38,7 +43,10 @@ class MqttHandler {
 
   // Sends a mqtt message to topic: mytopic
   sendMessage(message) {
-    this.mqttClient.publish('mytopic', message);
+    console.log(this.custom_topic);
+    //setInterval(function() {//send a message every sec      
+      this.mqttClient.publish(this.custom_topic, message);
+  //}, 1000);
   }
 }
 
