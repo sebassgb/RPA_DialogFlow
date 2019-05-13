@@ -2,19 +2,19 @@ const mqtt = require('mqtt');
 
 class MqttHandler {
   constructor() {//Just in case that we need authentification
-    this.mqttClient = null;
-    this.host = 'http://postman.cloudmqtt.com';
-    this.username = 'vomjuvox'; // mqtt credentials if these are needed to connect
-    this.password = 'qZhDtGK09JuN';
+    this.mqttClient = 'mqttjs_' + Math.random().toString(16).substr(2, 8);
+    this.host = 'mqtt://m24.cloudmqtt.com';
+    this.username = 'huhgmtli'; // mqtt credentials if these are needed to connect
+    this.password = 'P76pc5uz8qG6';
     this.clean = false;
-    this.port = 18569;
+    this.port = 12152;
   }
 
   connect(custom_topic) {
     // Connect mqtt with credentials (in case of needed, otherwise we can omit 2nd param)
     //this.mqttClient = mqtt.connect(this.host);
-    //this.mqttClient = mqtt.connect(this.host, { username: this.username, password: this.password, port: 18569 });
-    this.mqttClient = mqtt.connect(this.host,{ username: this.username, password: this.password},this.port);
+    this.mqttClient = mqtt.connect(this.host, { username: this.username, password: this.password });
+    //this.mqttClient = mqtt.connect({host: this.host, username: this.username, password: this.password, port: this.port});
     
     // Mqtt error calback
     this.mqttClient.on('error', (err) => {
