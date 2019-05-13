@@ -5,12 +5,15 @@ var app = express();
 var mqttHandler = require('./mqtt_handler');
 const ngrok = require('ngrok');
 
-var reply = "";//Variable that will contain the messages
+var reply = "Empty";//Variable that will contain the messages
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }))
 
 var mqttClient = new mqttHandler();
+mqttClient.custom_topic = 'temperature';
+mqttClient.connect(mqttClient.custom_topic);
+
 
 // Routes
 app.post("/send-mqtt", function (req, res) {
@@ -18,8 +21,8 @@ app.post("/send-mqtt", function (req, res) {
   res.status(200).send("Message sent to mqtt");
 });
 
-var port = process.env.PORT || 3000;
-var server = app.listen(3000, function () {
+var port = process.env.PORT || 18569;
+var server = app.listen(18569, function () {
   console.log("app running on port.", server.address().port);
 });
 
@@ -30,10 +33,8 @@ app.use(bodyParser.json());
 // Get a reply from DialogFlow
 app.post('/', express.json(), function (req, res) {
   if (req.body.queryResult.action === "getTemperature") {
-    //console.log(req.body.queryResult.queryText);//Question made by user, req contains all the request
-    mqttClient.custom_topic = 'temperature';
-    mqttClient.connect(mqttClient.custom_topic);    
-    reply = mqttClient.sendMessage("30°");
+    console.log(req.body.queryResult.queryText);//Question made by user, req contains all the request
+    mqttClient.connect(mqttClient.custom_topic);
     res.json({
       "fulfillmentText": reply
     });
