@@ -21,8 +21,8 @@ app.post("/send-mqtt", function (req, res) {
   res.status(200).send("Message sent to mqtt");
 });
 
-var port = process.env.PORT || 12152;
-var server = app.listen(12152, function () {
+var port = process.env.PORT || 3000;
+var server = app.listen(3000, function () {
   console.log("app running on port.", server.address().port);
 });
 
@@ -34,7 +34,8 @@ app.use(bodyParser.json());
 app.post('/', express.json(), function (req, res) {
   if (req.body.queryResult.action === "getTemperature") {
     console.log(req.body.queryResult.queryText);//Question made by user, req contains all the request
-    mqttClient.connect(mqttClient.custom_topic);
+    reply = mqttClient.connect(mqttClient.custom_topic);
+    mqttClient.finishConnection();//Here we will close the connection to avoid getting a lto of publications
     res.json({
       "fulfillmentText": reply
     });
