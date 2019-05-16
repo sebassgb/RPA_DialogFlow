@@ -1,5 +1,5 @@
 const mqtt = require('mqtt');
-
+var reponses = '';
 class MqttHandler {
   constructor() {//Just in case that we need authentification
     this.mqttClient = null;
@@ -39,12 +39,14 @@ class MqttHandler {
     // When a message arrives, console.log it
     this.mqttClient.on('message', function (topic, message) {
       console.log(message.toString());
+      reponses = message.toString();
     });
 
     this.mqttClient.on('close', () => {
       console.log(`mqtt client disconnected`);
     });
-    return this.reply;
+    console.log("responses"+reponses);
+    return reponses;
   }
 
   // Sends a mqtt message to the topic
@@ -53,9 +55,9 @@ finishConnection(){
 }
 
   sendMessage(message) {    
-    this.reply = message.toString();
-    this.mqttClient.publish(this.custom_topic, message,{qos:1});    
-    console.log(this.custom_topic);//subscription's topic
+    //this.reply = message.toString();
+    this.mqttClient.publish(this.custom_topic, message,{qos:1});   
+    //console.log(this.custom_topic);//subscription's topic 
   }
 
 
