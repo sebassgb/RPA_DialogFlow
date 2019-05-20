@@ -1,6 +1,8 @@
 'use strict';
+// Express library to create an api rest
 var express = require('express');
 var bodyParser = require('body-parser');//Parses Incoming Request bodies
+// To use express within Node
 var app = express();
 var mqttHandler = require('./mqtt_handler');
 
@@ -18,6 +20,7 @@ script.stdout.pipe(process.stdout);//show the log of the script executed outside
 
 var reply = "Empty";//Variable that will contain the messages
 
+//// Node.js body analysis middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }))
 
@@ -25,8 +28,7 @@ var mqttClient = new mqttHandler();
 //mqttClient.custom_topic = '/board';
 //mqttClient.connect(mqttClient.custom_topic);
 
-
-// Routes
+// Route methods (HTTP VERBS: POST, GET, PUT, DELETE, etc ...). Endpoint
 app.post("/send-mqtt", function (req, res) {
   mqttClient.sendMessage(req.body.message);
   res.status(200).send("Message sent to mqtt");
