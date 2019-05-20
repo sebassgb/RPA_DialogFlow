@@ -3,7 +3,18 @@ var express = require('express');
 var bodyParser = require('body-parser');//Parses Incoming Request bodies
 var app = express();
 var mqttHandler = require('./mqtt_handler');
-const ngrok = require('ngrok');
+
+//const ngrok = require('ngrok');
+
+const exec = require('child_process').exec;
+var script = exec('ssh -R gopigo3:80:localhost:3000 serveo.net', (error,stdout,stderr) => {
+ 
+  console.log(stdout);
+  console.log(stderr);
+  console.log(error);
+});
+
+script.stdout.pipe(process.stdout);//show the log of the script executed outside
 
 var reply = "Empty";//Variable that will contain the messages
 
@@ -25,6 +36,8 @@ var port = process.env.PORT || 3000;
 var server = app.listen(3000, function () {
   console.log("app running on port.", server.address().port);
 });
+
+
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -279,7 +292,7 @@ app.post('/', express.json(), function (req, res) {
           res.end(fromRunpy);
           });
       
-        reply ="Tourner à Gauche";//We get the message from the MQTT server
+        reply ="Tourner Ã  Gauche";//We get the message from the MQTT server
         res.json({
       "fulfillmentText": reply 
       });
@@ -308,7 +321,7 @@ app.post('/', express.json(), function (req, res) {
           res.end(fromRunpy);
           });
       
-        reply ="Tourner à Droit";//We get the message from the MQTT server
+        reply ="Tourner Ã  Droit";//We get the message from the MQTT server
         res.json({
       "fulfillmentText": reply 
       });
@@ -375,9 +388,15 @@ app.post('/', express.json(), function (req, res) {
   
 });
 
-
 (async function () {
-  const url = await ngrok.connect(port);//We have to upgrade to one of ngrok’s paid plans to avoid changing address everytime or use Heroku
+
+})();
+
+
+
+/*
+(async function () {
+  const url = await ngrok.connect(port);//We have to upgrade to one of ngrokâ€™s paid plans to avoid changing address everytime or use Heroku
   // No more pushing every little change in code to Firebase Cloud Functions and waiting a minute or two before testing
   console.log(url);
-})();
+})();*/
