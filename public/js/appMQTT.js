@@ -1,8 +1,6 @@
 'use strict';
-// Express library to create an api rest
 var express = require('express');
 var bodyParser = require('body-parser');//Parses Incoming Request bodies
-// To use express within Node
 var app = express();
 var mqttHandler = require('./mqtt_handler');
 
@@ -20,7 +18,6 @@ script.stdout.pipe(process.stdout);//show the log of the script executed outside
 
 var reply = "Empty";//Variable that will contain the messages
 
-//// Node.js body analysis middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }))
 
@@ -28,7 +25,8 @@ var mqttClient = new mqttHandler();
 //mqttClient.custom_topic = '/board';
 //mqttClient.connect(mqttClient.custom_topic);
 
-// Route methods (HTTP VERBS: POST, GET, PUT, DELETE, etc ...). Endpoint
+
+// Routes
 app.post("/send-mqtt", function (req, res) {
   mqttClient.sendMessage(req.body.message);
   res.status(200).send("Message sent to mqtt");
@@ -214,10 +212,12 @@ app.post('/', express.json(), function (req, res) {
         },1500); //time that could change in order to give time to the functions   
   }else if(req.body.queryResult.action === "goForward") {
     console.log(req.body.queryResult.queryText);//Question made by user, req contains all the request      
-      
+      let distance = parseFloat(req.body.queryResult.parameters.number);//gets the number to give the distance to the robot to do the action
+      console.log(distance);
+      if(isNaN(distance)) distance = 50;//if the user doesn't give a number this will be the default value
       var runPy = new Promise(function (success, nosuccess){
         const {spawn} = require('child_process');
-        const pyprog = spawn('python', ['./move_Forward.py']);
+        const pyprog = spawn('python', ['./move_ForwardCm.py',distance]);
         
         pyprog.stdout.on('data', function(data){
           console.log("Python Executed");
@@ -236,17 +236,17 @@ app.post('/', express.json(), function (req, res) {
           res.end(fromRunpy);
           });
       
-        reply ="Avance";//We get the message from the MQTT server
+        reply ="D'accord, j'avance de " + distance + " cm";//We get the message from the MQTT server
         res.json({
       "fulfillmentText": reply 
       });
      
-  }else if(req.body.queryResult.action === "goBack") {
+  }else if(req.body.queryResult.action === "turnBack") {
     console.log(req.body.queryResult.queryText);//Question made by user, req contains all the request      
       
       var runPy = new Promise(function (success, nosuccess){
         const {spawn} = require('child_process');
-        const pyprog = spawn('python', ['./go_Back.py']);
+        const pyprog = spawn('python', ['./turnBack.py']);
         
         pyprog.stdout.on('data', function(data){
           console.log("Python Executed");
@@ -265,7 +265,7 @@ app.post('/', express.json(), function (req, res) {
           res.end(fromRunpy);
           });
       
-        reply ="Reculer";//We get the message from the MQTT server
+        reply ="D'accord, je fais demi-tour";//We get the message from the MQTT server
         res.json({
       "fulfillmentText": reply 
       });
@@ -294,7 +294,7 @@ app.post('/', express.json(), function (req, res) {
           res.end(fromRunpy);
           });
       
-        reply ="Tourner Ã  Gauche";//We get the message from the MQTT server
+        reply ="D'accord, je tourne à Gauche";//We get the message from the MQTT server
         res.json({
       "fulfillmentText": reply 
       });
@@ -323,7 +323,7 @@ app.post('/', express.json(), function (req, res) {
           res.end(fromRunpy);
           });
       
-        reply ="Tourner Ã  Droit";//We get the message from the MQTT server
+        reply ="D'accord, je tourne à Droite";//We get the message from the MQTT server
         res.json({
       "fulfillmentText": reply 
       });
@@ -352,7 +352,7 @@ app.post('/', express.json(), function (req, res) {
           res.end(fromRunpy);
           });
       
-        reply ="Demarrer Motors";//We get the message from the MQTT server
+        reply ="D'accord, je demarre les moteurs";//We get the message from the MQTT server
         res.json({
       "fulfillmentText": reply 
       });
@@ -381,24 +381,40 @@ app.post('/', express.json(), function (req, res) {
           res.end(fromRunpy);
           });
       
-        reply ="Tourner la tete";//We get the message from the MQTT server
+        reply ="D'accord, je tourne la tete";//We get the message from the MQTT server
         res.json({
       "fulfillmentText": reply 
       });
      
-  }
-  
-});
+  }else if(req.body.queryResult.action === "goBackward") {
+    console.log(req.body.queryResult.queryText);//Question made by user, req contains all the request      
+      let distance = parseFloat(req.body.queryResult.parameters.number);//number to make the robot go backwards
+      console.log(distance);
+      if(isNaN(distance)) distance = 50;//the function in Python only needs a negative number
+      var runPy = new Promise(function (success, nosuccess){
+        const {spawn} = require('child_process');
+        const pyprog = spawn('python', ['./move_Backward.py', distance*(-1)]);
+        
+        pyprog.stdout.on('data', function(data){
+          console.log("Python Executed");
+          success(data);
+          });
+        
+        
+        pyprog.stderr.on('data', function(data){
+          console.log("Python NOT Executed");
+          nosuccess(data);
+          });
+        });
+        
+        runPy.then(function (fromRunpy){
+          console.log(fromRunpy.toString());
+          res.end(fromRunpy);
+          });
+      
+        reply = "D'accord, je recule de " + distance + " cm";//We get the message from the MQTT server
+        res.json({
+      "fulfillmentText": reply 
+      });
+}});
 
-(async function () {
-
-})();
-
-
-
-/*
-(async function () {
-  const url = await ngrok.connect(port);//We have to upgrade to one of ngrokâ€™s paid plans to avoid changing address everytime or use Heroku
-  // No more pushing every little change in code to Firebase Cloud Functions and waiting a minute or two before testing
-  console.log(url);
-})();*/
