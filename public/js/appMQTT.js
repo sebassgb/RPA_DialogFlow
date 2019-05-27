@@ -3,18 +3,18 @@ var express = require('express');
 var bodyParser = require('body-parser');//Parses Incoming Request bodies
 var app = express();
 var mqttHandler = require('./mqtt_handler');
-
-//const ngrok = require('ngrok');
+var fs = require('fs');
 
 const exec = require('child_process').exec;
-var script = exec('ssh -R gopigo3:80:localhost:3000 serveo.net', (error,stdout,stderr) => {
- 
-  console.log(stdout);
-  console.log(stderr);
-  console.log(error);
-});
-
-script.stdout.pipe(process.stdout);//show the log of the script executed outside
+  var script = exec('ssh -T -R gopigo3:80:localhost:3000 serveo.net', (error,stdout,stderr) => {//-T in order to connect ssh in boot startup of Linux automatically
+    //SSH connection on boot is done with root/.ssh but we need the file known_host in order to "know" who's trying to acces via SSH, because normally is done from /.ssh/known_host
+    console.log(stdout);
+    console.log(stderr);
+    console.log(error);
+  });
+  //var writable = fs.createWriteStream('log.txt');
+  script.stdout.pipe(process.stdout);
+  //script.stderr.pipe(writable);
 
 var reply = "Empty";//Variable that will contain the messages
 
@@ -34,6 +34,10 @@ app.post("/send-mqtt", function (req, res) {
 
 var port = process.env.PORT || 3000;
 var server = app.listen(3000, function () {
+  //  fs.writeFile('log2.txt', "app running on port." + server.address().port, function(err) {
+   //   if(err) return console.log(err);
+   //   console.log('message écrit');
+  //  });
   console.log("app running on port.", server.address().port);
 });
 
