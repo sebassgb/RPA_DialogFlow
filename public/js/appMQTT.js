@@ -4,9 +4,10 @@ var bodyParser = require('body-parser');//Parses Incoming Request bodies
 var app = express();
 var mqttHandler = require('./mqtt_handler');
 var fs = require('fs');
+var http = require('http');
 
 const exec = require('child_process').exec;
-  var script = exec('ssh -T -R gopigo3:80:localhost:3000 serveo.net', (error,stdout,stderr) => {//-T in order to connect ssh in boot startup of Linux automatically
+  var script = exec('ssh -T -R gopigo3:80:localhost:3001 serveo.net', (error,stdout,stderr) => {//-T in order to connect ssh in boot startup of Linux automatically
     //SSH connection on boot is done with root/.ssh but we need the file known_host in order to "know" who's trying to acces via SSH, because normally is done from /.ssh/known_host
     console.log(stdout);
     console.log(stderr);
@@ -22,9 +23,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }))
 
 var mqttClient = new mqttHandler();
-//mqttClient.custom_topic = '/board';
-//mqttClient.connect(mqttClient.custom_topic);
-
 
 // Routes
 app.post("/send-mqtt", function (req, res) {
@@ -32,13 +30,9 @@ app.post("/send-mqtt", function (req, res) {
   res.status(200).send("Message sent to mqtt");
 });
 
-var port = process.env.PORT || 3000;
-var server = app.listen(3000, function () {
-  //  fs.writeFile('log2.txt', "app running on port." + server.address().port, function(err) {
-   //   if(err) return console.log(err);
-   //   console.log('message écrit');
-  //  });
-  console.log("app running on port.", server.address().port);
+var port = process.env.PORT || 3001;
+var server = app.listen(3001, function () {
+   console.log("app running on port.", server.address().port);
 });
 
 
@@ -204,6 +198,58 @@ app.post('/', express.json(), function (req, res) {
       mqttClient.finishConnection();//we will close the connection with the topic   
         },1500); //time that could change in order to give time to the functions   
   }else if(req.body.queryResult.action === "getBoard") {
+    mqttClient.custom_topic = '/board';
+    mqttClient.connect(mqttClient.custom_topic);    
+    console.log(req.body.queryResult.queryText);//Question made by user, req contains all the request      
+      setTimeout(()=>{//We give the time to the function to get the message 
+        reply =mqttClient.getReponses();//We get the message from the MQTT server
+        res.json({
+      "fulfillmentText": reply 
+      });
+      mqttClient.finishConnection();//we will close the connection with the topic   
+        },1500); //time that could change in order to give time to the functions   
+  }else if(req.body.queryResult.action === "getZone") {
+    console.log(req.body.queryResult.queryText);//Question made by user, req contains all the request  
+          http.get('http://192.168.43.157:8082/poc-uwb/rest/maps/zones/Uwb-Innovlab', (res) => {//API GET REQUEST to the ATOS's Client
+          const { statusCode } = res;
+            const contentType = res.headers['content-type'];
+            let error;
+            if (statusCode !== 200) {//Validation if sometime we get an error
+              error = new Error('Request Failed.\n' +
+                                `Status Code: ${statusCode}`);
+            } else if (!/^application\/json/.test(contentType)) {
+              error = new Error('Invalid content-type.\n' +
+                                `Expected application/json but received ${contentType}`);
+            }
+            if (error) {
+              console.error(error.message);
+              // Consume response data to free up memory
+              res.resume();
+              return;
+            }
+
+            res.setEncoding('utf8');//We  cut the JSON to get the information
+            let rawData = '';
+            res.on('data', (chunk) => { rawData += chunk; });
+            res.on('end', () => {
+              try {
+                const parsedData = JSON.parse(rawData);
+                reply = parsedData;//We save the value of the recovered data in the variable
+                console.log(reply);//We print the data
+              } catch (e) {
+                console.error(e.message);
+              }
+            });
+          }).on('error', (e) => {
+          console.error(`Got error: ${e.message}`);
+          });
+          setTimeout(()=>{
+            //We give the time to the function to get the message 
+              res.json({
+            "fulfillmentText": reply //we send the information to DialogFlow
+            });
+        },1500); //time that could change in order to give time to the functions   
+  }else if(req.body.queryResult.action === "goZone") {
     mqttClient.custom_topic = '/board';
     mqttClient.connect(mqttClient.custom_topic);    
     console.log(req.body.queryResult.queryText);//Question made by user, req contains all the request      
